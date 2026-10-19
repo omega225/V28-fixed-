@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AETHER V28 ADMIN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; background: #000; font-family: monospace; overflow: hidden; }
+        iframe { width: 100%; height: 100vh; border: none; }
+        
+        #admin-panel {
+            position: fixed; top: 20px; right: 20px;
+            width: 280px; background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #0f0; padding: 15px;
+            color: #0f0; z-index: 10000; border-radius: 8px;
+            box-shadow: 0 0 20px #0f0;
+        }
+
+        .input-box {
+            width: 100%; padding: 10px; background: #000;
+            border: 1px solid #0f0; color: #0f0;
+            margin-bottom: 10px; box-sizing: border-box;
+            text-align: center; font-size: 1.2em;
+        }
+
+        .btn {
+            width: 100%; padding: 12px; background: #0f0;
+            color: #000; border: none; font-weight: bold;
+            cursor: pointer; text-transform: uppercase;
+        }
+
+        #output {
+            margin-top: 15px; text-align: center; border-top: 1px solid #0f0;
+            padding-top: 10px; display: none;
+        }
+
+        .num-display { font-size: 4em; color: #fff; margin: 5px 0; font-weight: bold; }
+        .details { display: flex; justify-content: space-around; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <iframe src="https://maanwin.site/"></iframe>
+
+    <div id="admin-panel">
+        <div style="font-size: 0.8em; margin-bottom: 10px;">V28_SERVER_INJECTOR_STANDALONE</div>
+        
+        <input type="number" id="periodInput" class="input-box" placeholder="PERIOD NUMBER">
+        <button class="btn" onclick="crackData()">CRACK RESULT</button>
+
+        <div id="output">
+            <div id="loading">DECRYPTING...</div>
+            <div id="result-content" style="display:none;">
+                <div class="num-display" id="resNum">?</div>
+                <div class="details">
+                    <span id="resColor">--</span>
+                    <span id="resSize">--</span>
+                </div>
+                <div style="font-size: 0.6em; margin-top: 10px; color: #fff;">LOCK_STATUS: 100% SECURE</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function crackData() {
+            const period = document.getElementById('periodInput').value;
+            if(!period) return;
+
+            document.getElementById('output').style.display = 'block';
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result-content').style.display = 'none';
+
+            fetch('/inject', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ period: period })
+            })
+            .then(res => res.json())
+            .then(data => {
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('result-content').style.display = 'block';
+                    
+                    document.getElementById('resNum').innerText = data.number;
+                    document.getElementById('resColor').innerText = data.color;
+                    document.getElementById('resSize').innerText = data.size;
+
+                    // Color Highlighting
+                    const c = document.getElementById('resColor');
+                    if(data.color.includes("VIOLET")) c.style.color = "#a0f";
+                    else if(data.color === "GREEN") c.style.color = "#0f0";
+                    else c.style.color = "#f00";
+                }, 1000);
+            });
+        }
+    </script>
+</body>
+</html>
